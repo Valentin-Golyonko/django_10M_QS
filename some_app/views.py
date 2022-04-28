@@ -6,6 +6,7 @@ from rest_framework.viewsets import ModelViewSet
 from some_app.models import Product
 from some_app.serializers import ProductSerializer
 
+LIMIT_100 = 1e2
 LIMIT_1K = 1e3
 LIMIT_10K = 1e4
 LIMIT_100K = 1e5
@@ -16,14 +17,14 @@ class ProductViewSet(ModelViewSet):
     permission_classes = (AllowAny,)
     serializer_class = ProductSerializer
     queryset = Product.objects.all()[:LIMIT_1K]
-    """ 5s place """
+    """ V1 """
 
 
 class ProductsValuesViewSet(ModelViewSet):
     permission_classes = (AllowAny,)
     serializer_class = ProductSerializer
     queryset = Product.objects.all()[:LIMIT_1K].values()
-    """ 4s place """
+    """ V2 """
 
 
 class ProductsValues(APIView):
@@ -31,7 +32,7 @@ class ProductsValues(APIView):
 
     @staticmethod
     def get(request, *args, **kwargs):
-        """ 3d place """
+        """ V3 """
         return Response(data=Product.objects.all()[:LIMIT_1K].values())
 
 
@@ -40,7 +41,7 @@ class ForLoopObjects(APIView):
 
     @staticmethod
     def get(request, *args, **kwargs):
-        """ 2d place """
+        """ V4 """
         out_data = {
             'low_price': [],
             'high_price': [],
@@ -67,7 +68,7 @@ class ForLoopValues(APIView):
 
     @staticmethod
     def get(request, *args, **kwargs):
-        """ WINNER """
+        """ V5 """
         out_data = {
             'low_price': [],
             'high_price': [],
@@ -89,9 +90,57 @@ class ForLoopValues(APIView):
         return Response(data=out_data)
 
 
-class V6(APIView):
+class SQLDebugV1(APIView):
     permission_classes = (AllowAny,)
 
     @staticmethod
     def get(request, *args, **kwargs):
-        return Response(data=Product.objects.values()[:LIMIT_1K])
+        out_data = {
+            'low_price': [],
+            'high_price': [],
+        }
+
+        """ 4.8 RPS; SQL: 1q  ~550ms """
+        # products = Product.objects.all()[:LIMIT_100]
+
+        """ 5.8 RPS, +17%; SQL: 1q  ~435ms """
+        # products = Product.objects.only(
+        #     'low_price',
+        #     'high_price',
+        # )[:LIMIT_100]
+
+        """ 6.3 RPS, +8% (total +25%); SQL: 1q  ~405ms """
+        products = Product.objects.values(
+            'low_price',
+            'high_price',
+        )[:LIMIT_100]
+
+        for product in products:
+            # out_data['low_price'].append(product.low_price)
+            # out_data['high_price'].append(product.high_price)
+            out_data['low_price'].append(product.get('low_price'))
+            out_data['high_price'].append(product.get('high_price'))
+
+        return Response(data=out_data)
+
+
+class SQLDebugV2(APIView):
+    permission_classes = (AllowAny,)
+
+    @staticmethod
+    def get(request, *args, **kwargs):
+        out_data = {
+            'low_price': [],
+            'high_price': [],
+        }
+
+        """ 5.5 RPS; SQL: 101q  ~450ms """
+        products = Product.objects.only(
+            'low_price',
+        )[:LIMIT_100]
+
+        for product in products:
+            out_data['low_price'].append(product.low_price)
+            out_data['high_price'].append(product.high_price)
+
+        return Response(data=out_data)

@@ -3,12 +3,6 @@ psycopg2
 
 Django<4.0
 djangorestframework
-django-cors-headers
-django-extensions
-drf-extensions
-
-celery
-django-celery-beat
 
 ipython
 requests
@@ -16,10 +10,8 @@ python-dotenv
 
 gunicorn
 
-numpy
+locust
+django-debug-toolbar
 
 # pip install -U pip setuptools wheel pip-tools
-# pip install -U django-debug-toolbar
-# pip install -U coverage
-# pip install -U locust
 # pip install -r requirements.txt
