@@ -30,11 +30,16 @@ class LocustRPS(HttpUser):
 
     @task
     def endpoints_test(self) -> None:
+        self.endpoint_v3()
         # self.endpoint_sql_debug_v1()
-        self.endpoint_sql_debug_v2()
+        # self.endpoint_sql_debug_v2()
         return None
 
     """ ------------------ requests methods -> ------------------ """
+
+    def endpoint_v3(self) -> None:
+        self.client.get(url="/v3/")
+        return None
 
     def endpoint_sql_debug_v1(self) -> None:
         self.client.get(url="/sql_debug_v1/")
