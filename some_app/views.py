@@ -100,16 +100,16 @@ class SQLDebugV1(APIView):
             'high_price': [],
         }
 
-        """ 4.8 RPS; SQL: 1q  ~550ms """
+        """ 4.8 RPS; SQL: 1q ~550ms """
         # products = Product.objects.all()[:LIMIT_100]
 
-        """ 5.8 RPS, +17%; SQL: 1q  ~435ms """
+        """ 5.8 RPS, +17%; SQL: 1q ~435ms """
         # products = Product.objects.only(
         #     'low_price',
         #     'high_price',
         # )[:LIMIT_100]
 
-        """ 6.3 RPS, +8% (total +25%); SQL: 1q  ~405ms """
+        """ 6.3 RPS, +8% (total +25%); SQL: 1q ~405ms """
         products = Product.objects.values(
             'low_price',
             'high_price',
@@ -134,7 +134,7 @@ class SQLDebugV2(APIView):
             'high_price': [],
         }
 
-        """ 5.5 RPS; SQL: 101q  ~450ms """
+        """ 5.5 RPS; SQL: 101q ~450ms """
         products = Product.objects.only(
             'low_price',
         )[:LIMIT_100]
