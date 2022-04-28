@@ -2,7 +2,8 @@ from django.urls import path, include
 from rest_framework import routers
 
 from some_app.views import (
-    ProductViewSet, ProductsValues, ForLoopObjects, ForLoopValues, ProductsValuesViewSet, SQLDebugV1, SQLDebugV2
+    ProductViewSet, ProductsValues, ForLoopObjects, ForLoopValues, ProductsValuesViewSet, SQLDebugV1, SQLDebugV2,
+    SQLDebugV3
 )
 
 router = routers.DefaultRouter()
@@ -17,4 +18,5 @@ urlpatterns = (
     path('v5/', ForLoopValues.as_view(), name='v5'),
     path('sql_debug_v1/', SQLDebugV1.as_view(), name='sql_debug_v1'),
     path('sql_debug_v2/', SQLDebugV2.as_view(), name='sql_debug_v2'),
+    path('sql_debug_v3/', SQLDebugV3.as_view(), name='sql_debug_v3'),
 )

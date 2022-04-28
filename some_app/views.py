@@ -17,7 +17,7 @@ class ProductViewSet(ModelViewSet):
     permission_classes = (AllowAny,)
     serializer_class = ProductSerializer
     queryset = Product.objects.all()[:LIMIT_1K]
-    """ V1 """
+    """ V1    3 RPS """
 
 
 class ProductsValuesViewSet(ModelViewSet):
@@ -32,7 +32,7 @@ class ProductsValues(APIView):
 
     @staticmethod
     def get(request, *args, **kwargs):
-        """ V3 """
+        """ V3    4.8 RPS """
         return Response(data=Product.objects.all()[:LIMIT_1K].values())
 
 
@@ -142,5 +142,21 @@ class SQLDebugV2(APIView):
         for product in products:
             out_data['low_price'].append(product.low_price)
             out_data['high_price'].append(product.high_price)
+
+        return Response(data=out_data)
+
+
+class SQLDebugV3(APIView):
+    permission_classes = (AllowAny,)
+
+    @staticmethod
+    def get(request, *args, **kwargs):
+        out_data = {
+            'low_price': [],
+            'high_price': [],
+        }
+
+        """ rq: 5ms; 900 RPS; SQL: 0q 0ms """
+        products = Product.objects.all()
 
         return Response(data=out_data)
