@@ -1,13 +1,19 @@
 from django.urls import path, include
 from rest_framework import routers
 
-from some_app.views import ProductViewSet, ProductGet
+from some_app.views import (
+    ProductViewSet, ProductsValues, ForLoopObjects, ForLoopValues, ProductsValuesViewSet, V6
+)
 
 router = routers.DefaultRouter()
 
-router.register('products', ProductViewSet, basename='products')
+router.register('v1', ProductViewSet, basename='v1')
+router.register('v2', ProductsValuesViewSet, basename='v2')
 
 urlpatterns = (
     path('', include(router.urls)),
-    path('custom/', ProductGet.as_view(), name='custom'),
+    path('v3/', ProductsValues.as_view(), name='v3'),
+    path('v4/', ForLoopObjects.as_view(), name='v4'),
+    path('v5/', ForLoopValues.as_view(), name='v5'),
+    path('v6/', V6.as_view(), name='v6'),
 )
