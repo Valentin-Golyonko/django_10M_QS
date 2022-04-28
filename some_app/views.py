@@ -77,7 +77,7 @@ class ForLoopValues(APIView):
             'sold_qty': [],
             'time_created': [],
         }
-        for item in Product.objects.all()[:LIMIT_1M].values():
+        for item in Product.objects.all()[:LIMIT_1K].values():
             out_data['low_price'].append(item.get('low_price'))
             out_data['high_price'].append(item.get('high_price'))
             out_data['demand_qty'].append(item.get('demand_qty'))
@@ -94,4 +94,4 @@ class V6(APIView):
 
     @staticmethod
     def get(request, *args, **kwargs):
-        return Response(data=Product.objects.values()[:LIMIT_100K])
+        return Response(data=Product.objects.values()[:LIMIT_1K])
