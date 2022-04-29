@@ -6,11 +6,11 @@ from rest_framework.viewsets import ModelViewSet
 from some_app.models import Product
 from some_app.serializers import ProductSerializer
 
-LIMIT_100 = 1e2
-LIMIT_1K = 1e3
-LIMIT_10K = 1e4
-LIMIT_100K = 1e5
-LIMIT_1M = 1e6
+LIMIT_100 = int(1e2)
+LIMIT_1K = int(1e3)
+LIMIT_10K = int(1e4)
+LIMIT_100K = int(1e5)
+LIMIT_1M = int(1e6)
 
 
 class ProductViewSet(ModelViewSet):
@@ -109,7 +109,7 @@ class SQLDebugV1(APIView):
         #     'high_price',
         # )[:LIMIT_100]
 
-        """ 6.3 RPS, +8% (total +25%); SQL: 1q ~405ms """
+        """ rq: 440ms; 6.3 RPS, +8% (total +25%); SQL: 1q ~405ms """
         products = Product.objects.values(
             'low_price',
             'high_price',

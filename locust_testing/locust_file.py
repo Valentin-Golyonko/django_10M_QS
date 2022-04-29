@@ -32,9 +32,9 @@ class LocustRPS(HttpUser):
     def endpoints_test(self) -> None:
         # self.endpoint_v1()
         # self.endpoint_v3()
-        # self.endpoint_sql_debug_v1()
+        self.endpoint_sql_debug_v1()
         # self.endpoint_sql_debug_v2()
-        self.endpoint_sql_debug_v3()
+        # self.endpoint_sql_debug_v3()
         return None
 
     """ ------------------ requests methods -> ------------------ """
