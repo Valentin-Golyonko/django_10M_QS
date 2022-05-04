@@ -23,7 +23,7 @@ class ProductViewSet(ModelViewSet):
 class ProductsValuesViewSet(ModelViewSet):
     permission_classes = (AllowAny,)
     serializer_class = ProductSerializer
-    queryset = Product.objects.all()[:LIMIT_1K].values()
+    queryset = Product.objects.values()[:LIMIT_1K]
     """ V2 """
 
 
@@ -33,7 +33,7 @@ class ProductsValues(APIView):
     @staticmethod
     def get(request, *args, **kwargs):
         """ V3    4.8 RPS """
-        return Response(data=Product.objects.all()[:LIMIT_1K].values())
+        return Response(data=Product.objects.values()[:LIMIT_1K])
 
 
 class ForLoopObjects(APIView):
@@ -78,7 +78,7 @@ class ForLoopValues(APIView):
             'sold_qty': [],
             'time_created': [],
         }
-        for item in Product.objects.all()[:LIMIT_1K].values():
+        for item in Product.objects.values()[:LIMIT_1K]:
             out_data['low_price'].append(item.get('low_price'))
             out_data['high_price'].append(item.get('high_price'))
             out_data['demand_qty'].append(item.get('demand_qty'))
@@ -100,24 +100,27 @@ class SQLDebugV1(APIView):
             'high_price': [],
         }
 
-        """ 4.8 RPS; SQL: 1q ~550ms """
+        """ v1: 4.8 RPS; SQL: 1q ~550ms """
         # products = Product.objects.all()[:LIMIT_100]
+        # for product in products:
+        #     out_data['low_price'].append(product.low_price)
+        #     out_data['high_price'].append(product.high_price)
 
-        """ 5.8 RPS, +17%; SQL: 1q ~435ms """
+        """ v2: 5.8 RPS, +17%; SQL: 1q ~435ms """
         # products = Product.objects.only(
         #     'low_price',
-        #     'high_price',
+        #     'high_price'
         # )[:LIMIT_100]
+        # for product in products:
+        #     out_data['low_price'].append(product.low_price)
+        #     out_data['high_price'].append(product.high_price)
 
-        """ rq: 440ms; 6.3 RPS, +8% (total +25%); SQL: 1q ~405ms """
+        """ v3: rq: 440ms; 6.3 RPS, +8% (total +25%); SQL: 1q ~405ms """
         products = Product.objects.values(
             'low_price',
             'high_price',
         )[:LIMIT_100]
-
         for product in products:
-            # out_data['low_price'].append(product.low_price)
-            # out_data['high_price'].append(product.high_price)
             out_data['low_price'].append(product.get('low_price'))
             out_data['high_price'].append(product.get('high_price'))
 
