@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -34,6 +35,13 @@ class ProductsValues(APIView):
     def get(request, *args, **kwargs):
         """ V3    4.8 RPS """
         return Response(data=Product.objects.values()[:LIMIT_1K])
+
+
+# @login_required
+# @permission_required(perm, login_url=None, raise_exception=False)
+def products_values(request, *args, **kwargs):
+    """ V3.2; +5-10% time of v.3; can NOT do 1M. """
+    return JsonResponse(data=list(Product.objects.values()[:LIMIT_1M]), safe=False)
 
 
 class ForLoopObjects(APIView):
