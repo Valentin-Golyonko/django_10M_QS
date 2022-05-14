@@ -14,6 +14,6 @@ locust
 django-debug-toolbar
 
 # pip install -U pip setuptools wheel pip-tools
-# pip-compyle
+# pip-compile
 # pip-sync
 # pip install -r requirements.txt
