@@ -40,8 +40,16 @@ class ProductsValues(APIView):
 # @login_required
 # @permission_required(perm, login_url=None, raise_exception=False)
 def products_values(request, *args, **kwargs):
-    """ V3.2; +5-10% time of v.3; can NOT do 1M. """
-    return JsonResponse(data=list(Product.objects.values()[:LIMIT_1M]), safe=False)
+    """ V3.2; +5-10% time of v3; can NOT do 1M. """
+    return JsonResponse(data=list(Product.objects.values()[:LIMIT_1K]), safe=False)
+
+
+async def products_values_async(request, *args, **kwargs):
+    """ V3.3; can NOT do 1M. """
+    out_data = []
+    async for i in Product.objects.values()[:LIMIT_1K]:
+        out_data.append(i)
+    return JsonResponse(data=out_data, safe=False)
 
 
 class ForLoopObjects(APIView):

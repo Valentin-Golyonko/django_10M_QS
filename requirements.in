@@ -1,7 +1,7 @@
 psycopg2-binary
 psycopg2
 
-Django<4.0
+Django
 djangorestframework
 
 ipython
