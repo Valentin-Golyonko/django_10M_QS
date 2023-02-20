@@ -14,4 +14,4 @@ class Product(models.Model):
     time_created = models.DateTimeField()
 
     class Meta:
-        ordering = ('time_created',)
+        ordering = ("time_created",)

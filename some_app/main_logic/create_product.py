@@ -29,7 +29,7 @@ def create_product() -> None:
                 offers_qty=random.randint(1, 500),
                 bought_qty=random.randint(1, 1000),
                 sold_qty=random.randint(1, 1000),
-                time_created=datetime.fromtimestamp(start_time + (i * 60), tz=tz)
+                time_created=datetime.fromtimestamp(start_time + (i * 60), tz=tz),
             )
         )
         count += 1

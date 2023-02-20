@@ -21,7 +21,6 @@ logger = logging.getLogger(__name__)
 
 
 class LocustRPS(HttpUser):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -72,8 +71,10 @@ class LocustRPS(HttpUser):
         except ValueError:
             logger.error(f"try_not_200(): Response content is not valid JSON")
         else:
-            logger.info(f"try_not_200(): response detail;"
-                        f" detail = {response_data.get('detail')}")
+            logger.info(
+                f"try_not_200(): response detail;"
+                f" detail = {response_data.get('detail')}"
+            )
         return None
 
     @staticmethod
@@ -81,13 +82,17 @@ class LocustRPS(HttpUser):
         try:
             return response.json()
         except JSONDecodeError as ex:
-            logger.error(f"response_json(): JSONDecodeError;"
-                         f" {response.url = };"
-                         f" {ex.args[0] = }")
+            logger.error(
+                f"response_json(): JSONDecodeError;"
+                f" {response.url = };"
+                f" {ex.args[0] = }"
+            )
         except Exception as ex:
-            logger.exception(f"response_json(): response.json() Ex;"
-                             f" {response.url = };"
-                             f" {ex.args[0] = }")
+            logger.exception(
+                f"response_json(): response.json() Ex;"
+                f" {response.url = };"
+                f" {ex.args[0] = }"
+            )
         return {}
 
     """ ------------------ <- request utilities ------------------ """

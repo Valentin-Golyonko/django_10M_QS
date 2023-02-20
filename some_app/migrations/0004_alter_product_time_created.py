@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('some_app', '0003_remove_product_title'),
+        ("some_app", "0003_remove_product_title"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='product',
-            name='time_created',
+            model_name="product",
+            name="time_created",
             field=models.DateTimeField(),
         ),
     ]
