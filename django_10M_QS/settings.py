@@ -128,6 +128,77 @@ REST_FRAMEWORK = {
     ),
 }
 
+"""Logging settings ->"""
+DJANGO_LOG_LEVEL = "WARNING"
+APP_LOG_LVL = "INFO"
+LOGS_DIR = "logs"
+
+FILE_DJANGO = BASE_DIR / LOGS_DIR / "django.log"
+FILE_APPS_LOGS = BASE_DIR / LOGS_DIR / "apps_logging.log"
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} | {asctime} | {module} | {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} | {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "file_django": {
+            "level": DJANGO_LOG_LEVEL,
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "when": "midnight",
+            "interval": 1,
+            "backupCount": 10,
+            "filename": FILE_DJANGO,
+            "formatter": "verbose",
+        },
+        "file": {
+            "level": APP_LOG_LVL,
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "when": "midnight",
+            "interval": 1,
+            "backupCount": 10,
+            "filename": FILE_APPS_LOGS,
+            "formatter": "verbose",
+        },
+        "console": {
+            "level": APP_LOG_LVL,
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ("file_django", "console"),
+            "level": DJANGO_LOG_LEVEL,
+            "propagate": True,
+        },
+        "django_10M_QS": {
+            "handlers": ("file", "console"),
+            "level": APP_LOG_LVL,
+            "propagate": True,
+        },
+        "locust_testing": {
+            "handlers": ("file", "console"),
+            "level": APP_LOG_LVL,
+            "propagate": True,
+        },
+        "some_app": {
+            "handlers": ("file", "console"),
+            "level": APP_LOG_LVL,
+            "propagate": True,
+        },
+    },
+}
+"""<- Logging settings"""
+
 if DEBUG:
     INTERNAL_IPS = ("127.0.0.1",)
 

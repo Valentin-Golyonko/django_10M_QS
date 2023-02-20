@@ -13,18 +13,20 @@ LIMIT_10K = int(1e4)
 LIMIT_100K = int(1e5)
 LIMIT_1M = int(1e6)
 
+LIMIT_IN_USE = LIMIT_1K
+
 
 class ProductViewSet(ModelViewSet):
     permission_classes = (AllowAny,)
     serializer_class = ProductSerializer
-    queryset = Product.objects.all()[:LIMIT_1K]
+    queryset = Product.objects.all()[:LIMIT_IN_USE]
     """ V1    3 RPS """
 
 
 class ProductsValuesViewSet(ModelViewSet):
     permission_classes = (AllowAny,)
     serializer_class = ProductSerializer
-    queryset = Product.objects.values()[:LIMIT_1K]
+    queryset = Product.objects.values()[:LIMIT_IN_USE]
     """ V2 """
 
 
@@ -34,20 +36,20 @@ class ProductsValues(APIView):
     @staticmethod
     def get(request, *args, **kwargs):
         """V3    4.8 RPS"""
-        return Response(data=Product.objects.values()[:LIMIT_1K])
+        return Response(data=Product.objects.values()[:LIMIT_IN_USE])
 
 
 # @login_required
 # @permission_required(perm, login_url=None, raise_exception=False)
 def products_values(request, *args, **kwargs):
     """V3.2; +5-10% time of v3; can NOT do 1M."""
-    return JsonResponse(data=list(Product.objects.values()[:LIMIT_1K]), safe=False)
+    return JsonResponse(data=list(Product.objects.values()[:LIMIT_IN_USE]), safe=False)
 
 
 async def products_values_async(request, *args, **kwargs):
     """V3.3; can NOT do 1M."""
     out_data = []
-    async for i in Product.objects.values()[:LIMIT_1K]:
+    async for i in Product.objects.values()[:LIMIT_IN_USE]:
         out_data.append(i)
     return JsonResponse(data=out_data, safe=False)
 
@@ -67,7 +69,7 @@ class ForLoopObjects(APIView):
             "sold_qty": [],
             "time_created": [],
         }
-        for item in Product.objects.all()[:LIMIT_1K]:
+        for item in Product.objects.all()[:LIMIT_IN_USE]:
             out_data["low_price"].append(item.low_price)
             out_data["high_price"].append(item.high_price)
             out_data["demand_qty"].append(item.demand_qty)
@@ -94,7 +96,7 @@ class ForLoopValues(APIView):
             "sold_qty": [],
             "time_created": [],
         }
-        for item in Product.objects.values()[:LIMIT_1K]:
+        for item in Product.objects.values()[:LIMIT_IN_USE]:
             out_data["low_price"].append(item.get("low_price"))
             out_data["high_price"].append(item.get("high_price"))
             out_data["demand_qty"].append(item.get("demand_qty"))
@@ -117,7 +119,7 @@ class SQLDebugV1(APIView):
         }
 
         """ v1: 4.8 RPS; SQL: 1q ~550ms """
-        # products = Product.objects.all()[:LIMIT_100]
+        # products = Product.objects.all()[:LIMIT_IN_USE]
         # for product in products:
         #     out_data['low_price'].append(product.low_price)
         #     out_data['high_price'].append(product.high_price)
@@ -126,7 +128,7 @@ class SQLDebugV1(APIView):
         # products = Product.objects.only(
         #     'low_price',
         #     'high_price'
-        # )[:LIMIT_100]
+        # )[:LIMIT_IN_USE]
         # for product in products:
         #     out_data['low_price'].append(product.low_price)
         #     out_data['high_price'].append(product.high_price)
@@ -135,7 +137,7 @@ class SQLDebugV1(APIView):
         products = Product.objects.values(
             "low_price",
             "high_price",
-        )[:LIMIT_100]
+        )[:LIMIT_IN_USE]
         for product in products:
             out_data["low_price"].append(product.get("low_price"))
             out_data["high_price"].append(product.get("high_price"))
@@ -156,7 +158,7 @@ class SQLDebugV2(APIView):
         """ 5.5 RPS; SQL: 101q ~450ms """
         products = Product.objects.only(
             "low_price",
-        )[:LIMIT_100]
+        )[:LIMIT_IN_USE]
 
         for product in products:
             out_data["low_price"].append(product.low_price)

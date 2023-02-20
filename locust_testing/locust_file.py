@@ -4,12 +4,14 @@ git: https://github.com/locustio/locust
 doc: http://docs.locust.io/en/stable/
 
 Before run:
-    - pip install locust
+    - pip install -U locust gunicorn
     - ! IMPORTANT: backend server should run in Docker with uWSGI / Gunicorn !
     - gunicorn -w 4 django_10M_QS.wsgi
 
-run:
+run v1:
     locust
+run v2:
+    locust --headless -u 100 -r 20 -t 2m
 """
 import logging
 
@@ -29,70 +31,39 @@ class LocustRPS(HttpUser):
 
     @task
     def endpoints_test(self) -> None:
-        # self.endpoint_v1()
-        # self.endpoint_v3()
-        self.endpoint_sql_debug_v1()
-        # self.endpoint_sql_debug_v2()
-        # self.endpoint_sql_debug_v3()
+        # target_url = "/v1/"
+        # target_url = "/v2/"
+        # target_url = "/v3/"
+        # target_url = "/v3_2/"
+        target_url = "/v3_3/"
+        # target_url = "/v4/"
+        # target_url = "/v5/"
+
+        self.universal_page(target_url=target_url)
         return None
-
-    """ ------------------ requests methods -> ------------------ """
-
-    def endpoint_v1(self) -> None:
-        self.client.get(url="/v1/")
-        return None
-
-    def endpoint_v3(self) -> None:
-        self.client.get(url="/v3/")
-        return None
-
-    def endpoint_sql_debug_v1(self) -> None:
-        self.client.get(url="/sql_debug_v1/")
-        return None
-
-    def endpoint_sql_debug_v2(self) -> None:
-        self.client.get(url="/sql_debug_v2/")
-        return None
-
-    def endpoint_sql_debug_v3(self) -> None:
-        self.client.get(url="/sql_debug_v3/")
-        return None
-
-    """ ------------------ <- requests methods ------------------ """
 
     """ ------------------ request utilities -> ------------------ """
 
-    @classmethod
-    def try_not_200(cls, response: Response) -> None:
-        if response.status_code == 0:
-            return None
-        try:
-            response_data = cls.response_json(response)
-        except ValueError:
-            logger.error(f"try_not_200(): Response content is not valid JSON")
-        else:
-            logger.info(
-                f"try_not_200(): response detail;"
-                f" detail = {response_data.get('detail')}"
-            )
+    def universal_page(self, target_url: str) -> None:
+        response: Response = self.client.get(url=target_url)
+
+        if (status_code := response.status_code) != 200:
+            logger.error(f"universal_page(): status_code != 200;" f" {status_code = }")
+            if response.status_code == 0:
+                return None
+            response_data = self.response_json(response)
         return None
 
     @staticmethod
     def response_json(response: Response) -> dict:
         try:
             return response.json()
-        except JSONDecodeError as ex:
-            logger.error(
-                f"response_json(): JSONDecodeError;"
-                f" {response.url = };"
-                f" {ex.args[0] = }"
-            )
+        except JSONDecodeError:
+            msg = f"response_json(): JSONDecodeError; {response.url = };"
+            logger.error(msg)
         except Exception as ex:
-            logger.exception(
-                f"response_json(): response.json() Ex;"
-                f" {response.url = };"
-                f" {ex.args[0] = }"
-            )
+            msg = f"response_json(): response.json() Ex; {response.url = }; {ex = }"
+            logger.error(msg)
         return {}
 
     """ ------------------ <- request utilities ------------------ """
