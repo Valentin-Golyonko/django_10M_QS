@@ -28,7 +28,7 @@ Data:
 | -      |                         - |                         - |                         - |
 
 description '/v1/':
-771 ms = Locust Min GET time
-(650 ms) = Postman Avg GET time
-4.19 rps = Locust req/s
+771 ms = Locust Min GET time;
+(650 ms) = Postman Avg GET time;
+4.19 rps = Locust req/s;
 
